@@ -1,11 +1,13 @@
 import static io.restassured.RestAssured.*;
 
+import io.restassured.parsing.Parser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 
 import io.restassured.path.json.JsonPath;
 import org.openqa.selenium.chrome.ChromeDriver;
+import pojo.GetCourse;
 
 public class oAuthTest {
 
@@ -20,7 +22,7 @@ public class oAuthTest {
         //    driver.findElement (By.cssSelector("input [type='password']")). sendKeys (Keys. ENTER);
         //    Thread.sleep (4000);
         //    String url = driver.getCurrentUrl();
-        String url = "https://rahulshettyacademy.com/getCourse.php?code=4%2F0AbUR2VNZ6xqdcs5nOfFGpoaNZN8_Fk9F5CKY1vlj6S6BIrsQDhn5bk9IYY_vZ7bXVrEBUw&scope=email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=0&prompt=consent";
+        String url = "https://rahulshettyacademy.com/getCourse.php?code=4%2F0AbUR2VOFGDiRaQYhVnVUNZIegQTo11DihDeMxKoXyyft81jTlKrPKShrLHhABRdnxHmVvQ&scope=email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=0&prompt=none";
         String partialCode = url.split("code=")[1];
         String code = partialCode.split("&scope")[0];
         System.out.println(code);
@@ -37,11 +39,18 @@ public class oAuthTest {
         JsonPath js = new JsonPath(accessTokenResponse);
         String accessToken = js.getString("access_token");
 
-        String response =
-                given().queryParam("access_token", accessToken)
-                        .when().log().all()
-                        .get("https://rahulshettyacademy.com/getCourse.php").asString();
 
-        System.out.println(response);
+
+        GetCourse gs =
+                given().queryParam("access_token", accessToken).expect().defaultParser(Parser.JSON)
+                        .when()
+                        .get("https://rahulshettyacademy.com/getCourse.php").as(GetCourse.class);
+
+        System.out.println(gs.getLinkedIn());
+        System.out.println(gs.getInstructor());
+
+        //System.out.println(response);
+
+
     }
 }

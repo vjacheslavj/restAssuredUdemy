@@ -4,7 +4,7 @@ public class GetCourse {
     private String url;
     private String services;
     private String expertise;
-    private String courses;
+    private Courses Courses;
     private String instructor;
     private String linkedIn;
 
@@ -20,8 +20,8 @@ public class GetCourse {
         return expertise;
     }
 
-    public String getCourses() {
-        return courses;
+    public pojo.Courses getCourses() {
+        return Courses;
     }
 
     public String getInstructor() {
@@ -44,8 +44,8 @@ public class GetCourse {
         this.expertise = expertise;
     }
 
-    public void setCourses(String courses) {
-        this.courses = courses;
+    public void setCourses(pojo.Courses courses) {
+        this.Courses = courses;
     }
 
     public void setInstructor(String instructor) {
