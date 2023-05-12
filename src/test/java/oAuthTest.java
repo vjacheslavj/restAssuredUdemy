@@ -1,17 +1,20 @@
 import static io.restassured.RestAssured.*;
 
 import io.restassured.parsing.Parser;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-
 import io.restassured.path.json.JsonPath;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.*;
+import pojo.Api;
 import pojo.GetCourse;
+import pojo.WebAutomation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class oAuthTest {
 
     public static void main(String[] args) throws InterruptedException {
+        String[] courseTitles = {"Selenium Webdriver Java", "Cypress", "Protractor"};
         //    System.setProperty("webdriver.chrome.driver", "/Users/vjaceslavsjermakovs/IdeaProjects/chrome driver/chromedriver113");
         //    WebDriver driver = new ChromeDriver();
         //    driver.get("https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.email&auth_url=https://accounts.google.com/o/oauth2/v2/auth&client_id=692183103107-p0m7ent2hk7suguv4vq22hjcfhcr43pj.apps.googleusercontent.com&response_type=code&redirect_uri=https://rahulshettyacademy.com/getCourse.php");
@@ -22,7 +25,7 @@ public class oAuthTest {
         //    driver.findElement (By.cssSelector("input [type='password']")). sendKeys (Keys. ENTER);
         //    Thread.sleep (4000);
         //    String url = driver.getCurrentUrl();
-        String url = "https://rahulshettyacademy.com/getCourse.php?code=4%2F0AbUR2VOFGDiRaQYhVnVUNZIegQTo11DihDeMxKoXyyft81jTlKrPKShrLHhABRdnxHmVvQ&scope=email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=0&prompt=none";
+        String url = "https://rahulshettyacademy.com/getCourse.php?code=4%2F0AbUR2VP5F6bBP7Um3scgIHa94kxReFIW3mzn5XNeZTwQymZXQUO3Jb_MnJnr1BKX07w75g&scope=email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=0&prompt=none";
         String partialCode = url.split("code=")[1];
         String code = partialCode.split("&scope")[0];
         System.out.println(code);
@@ -40,7 +43,6 @@ public class oAuthTest {
         String accessToken = js.getString("access_token");
 
 
-
         GetCourse gs =
                 given().queryParam("access_token", accessToken).expect().defaultParser(Parser.JSON)
                         .when()
@@ -48,6 +50,28 @@ public class oAuthTest {
 
         System.out.println(gs.getLinkedIn());
         System.out.println(gs.getInstructor());
+        System.out.println(gs.getCourses().getApi().get(1).getCourseTitle());
+
+        List<Api> apiCourses = gs.getCourses().getApi();
+        for (int i = 0; i < apiCourses.size(); i++) {
+            if (apiCourses.get(i).getCourseTitle().equalsIgnoreCase("SoapUI Webservices testing")) {
+                System.out.println(apiCourses.get(i).getPrice());
+            }
+        }
+
+        //Get the courses names of WebAutomation
+        ArrayList<String> a = new ArrayList<String>();
+
+        List<WebAutomation> webAutomations = gs.getCourses().getWebAutomation();
+
+        for (int j = 0; j < webAutomations.size(); j++) {
+
+            a.add(webAutomations.get(j).getCourseTitle());
+        }
+
+        List<String> expectedList = Arrays.asList(courseTitles);
+
+        Assert.assertTrue(a.equals(expectedList));
 
         //System.out.println(response);
 
